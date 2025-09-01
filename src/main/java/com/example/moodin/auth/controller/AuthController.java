@@ -1,5 +1,6 @@
 package com.example.moodin.auth.controller;
 
+import com.example.moodin.auth.dto.SignUpRequestDto;
 import com.example.moodin.auth.service.TokenService;
 import com.example.moodin.user.entity.UserEntity;
 import com.example.moodin.user.repository.UserRepository;
@@ -18,6 +19,33 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final TokenService tokenService;
+
+    // 회원가입
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody SignUpRequestDto req) {
+        // 매우 단순 검증 (빈 값 방지 정도)
+        if (req.username() == null || req.username().isBlank() ||
+                req.password() == null || req.password().isBlank()) {
+            return ResponseEntity.badRequest().body("username/password 필요");
+        }
+
+        if (userRepository.existsByUsername(req.username())) {
+            return ResponseEntity.status(409).body("이미 존재하는 username");
+        }
+
+        UserEntity saved = userRepository.save(
+                UserEntity.builder()
+                        .username(req.username())
+                        .password(req.password()) // ⚠️ 평문 저장(빠른 테스트용)
+                        .build()
+        );
+
+        // 가입 직후 바로 로그인 토큰까지 주고 싶다면 ↓ 주석 해제
+        // String token = tokenService.generateToken(saved.getId());
+        // return ResponseEntity.status(201).body(token);
+
+        return ResponseEntity.status(201).body("가입 성공");
+    }
 
     // 로그인
     @PostMapping("/login")

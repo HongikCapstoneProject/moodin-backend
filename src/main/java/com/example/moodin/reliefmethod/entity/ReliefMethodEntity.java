@@ -3,9 +3,8 @@ package com.example.moodin.reliefmethod.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.Instant;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import java.util.UUID;
 
 @Entity
@@ -21,8 +20,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class ReliefMethodEntity {
+
     @Id
-    @Column(name = "method_id", nullable = false, updatable = false)
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    //@Type(type = "uuid-char") // DB에 VARCHAR(36)으로 저장
+    @Column(name = "method_id", columnDefinition = "CHAR(36)")
     private UUID methodId;
 
     @Column(name = "method_title", length = 120, nullable = false)
@@ -30,12 +33,4 @@ public class ReliefMethodEntity {
 
     @Column(name = "method_description", nullable = false, columnDefinition = "text")
     private String methodDescription;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
 }
