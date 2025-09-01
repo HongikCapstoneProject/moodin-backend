@@ -1,5 +1,6 @@
 package com.example.moodin.auth.controller;
 
+import com.example.moodin.auth.dto.LoginRequestDto;
 import com.example.moodin.auth.dto.SignUpRequestDto;
 import com.example.moodin.auth.service.TokenService;
 import com.example.moodin.user.entity.UserEntity;
@@ -10,6 +11,7 @@ import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -21,7 +23,7 @@ public class AuthController {
     private final TokenService tokenService;
 
     // 회원가입
-    @PostMapping("/signup")
+    @PostMapping(value = "/signup", produces = "application/json")
     public ResponseEntity<?> signup(@RequestBody SignUpRequestDto req) {
         // 매우 단순 검증 (빈 값 방지 정도)
         if (req.username() == null || req.username().isBlank() ||
@@ -43,22 +45,28 @@ public class AuthController {
         // 가입 직후 바로 로그인 토큰까지 주고 싶다면 ↓ 주석 해제
         // String token = tokenService.generateToken(saved.getId());
         // return ResponseEntity.status(201).body(token);
+        Object pk = saved.getUserId(); // 예: Long
+        //String token = tokenService.generateToken(pk);
 
-        return ResponseEntity.status(201).body("가입 성공");
+        return ResponseEntity.status(201).body(Map.of(
+                "userId", pk,
+                "username", saved.getUsername(),
+                "password", saved.getPassword()
+        ));
     }
 
-    // 로그인
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam String username,
-                                   @RequestParam String password) {
-        Optional<UserEntity> userOpt = userRepository.findByUsername(username);
-
-        if (userOpt.isPresent() && userOpt.get().getPassword().equals(password)) {
-            String token = tokenService.generateToken(userOpt.get().getUserId());
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto req) {
+        var userOpt = userRepository.findByUsername(req.username());
+        if (userOpt.isPresent() && userOpt.get().getPassword().equals(req.password())) {
+            String token = tokenService.generateToken(
+                    /* PK 타입에 맞게: */ userOpt.get().getUserId() // or getId()/getUuid()
+            );
             return ResponseEntity.ok(token);
         }
         return ResponseEntity.status(401).body("로그인 실패");
     }
+
 
     // 내 정보
     @GetMapping("/me")
