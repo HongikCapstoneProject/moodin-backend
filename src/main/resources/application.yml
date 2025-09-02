@@ -32,3 +32,16 @@ spring:
     servlet:
       session:
         timeout: 30m
+
+  stress:
+    combineStrategy: WORST
+    hrv.sdnn:
+      lowMin: 60.0
+      highMin: 40.0
+      riskMin: 20.0
+      criticalMin: -1e9
+    gsr.tonic:
+      lowMax: 5.0
+      highMax: 7.0
+      riskMax: 10.0
+      criticalMax: 1e9
