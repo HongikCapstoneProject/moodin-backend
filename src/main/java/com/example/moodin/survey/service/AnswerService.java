@@ -54,12 +54,12 @@ public class AnswerService {
 
     // 사용자별 답변 조회
     public List<AnswerEntity> getAnswerByUser(Long userId){
-        return answerRepository.findByUserId_UserId(userId);
+        return answerRepository.findByUser_UserId(userId);
     }
 
     // 특정 문항에 대한 답변 조회
     public List<AnswerEntity> getAnswerByQuestion(Long questionId){
-        return answerRepository.findByQuestionId_QuestionId(questionId);
+        return answerRepository.findByQuestion_QuestionId(questionId);
     }
 
 
