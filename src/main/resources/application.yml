@@ -16,7 +16,7 @@ spring:
       enabled: true
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: update  # create-drop 대신 update 사용
       show-sql: true
     properties:
       hibernate:
@@ -28,10 +28,17 @@ spring:
     init:
       mode: never
 
-  server:
-    servlet:
-      session:
-        timeout: 30m
+server:
+  servlet:
+    session:
+      timeout: 30m
+      cookie:
+        http-only: true
+        secure: false
+        same-site: lax
+
+fastapi:
+  url: http://localhost:8000
 
   stress:
     combineStrategy: WORST
