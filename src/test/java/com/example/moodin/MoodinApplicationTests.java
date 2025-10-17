@@ -8,6 +8,7 @@ class MoodinApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// 테스트 비활성화
 	}
 
 }

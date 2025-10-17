@@ -1,3 +1,13 @@
 package com.example.moodin.auth.dto;
 
-public record LoginRequestDto(String username, String password) {}
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class LoginRequestDto {
+    private String userEmail;
+    private String userPassword;
+}
